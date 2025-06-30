@@ -28,7 +28,6 @@ url: "https://Tao-68.github.io"
 github:
   username: Tao-68 # change to your GitHub username
 
-
 social:
   # Change to your full name.
   # It will be displayed as the default author of the posts and the copyright owner in the Footer
@@ -96,7 +95,7 @@ theme_mode: # [light | dark]
 cdn:
 
 # the avatar on sidebar, support local or CORS resources
-avatar: assests/hehe.png
+avatar: assets/hehe.png
 
 # The URL of the site-wide social preview image used in SEO `og:image` meta tag.
 # It can be overridden by a customized `page.image` in front matter.
