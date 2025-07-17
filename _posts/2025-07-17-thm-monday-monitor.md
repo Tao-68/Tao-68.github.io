@@ -27,6 +27,8 @@ We head over to the dashboard and view the data present to us. Press the **Flopp
 
 We filter out the following attributes as columns in the table:  **data.win.eventdata.commandLine, eventdata.parentCommandLine** because these attributes provide critical insights into the exact commands executed by a process and its parent. This helps trace the origin and propagation of potentially malicious activity, such as identifying the initial vector (e.g., a downloaded file execution) and understanding the chain of process creation that led to system compromise.
 
+![Approach](add_column.png)
+
 Note: The questions for this task are not answered in order as the solutions were found by going through logs and noticing the anomalies within those logs along the way. 
 
 #### Question 7: Data was exfiltrated from the host. What was the flag that was part of the data?
@@ -54,6 +56,7 @@ As you have noticed, the approach is done by slowly working backwards and discov
 We noticed the **schtask.exe** command here which is responsible for scheduling tasks.
 
 The full command is the parent command line here in the snapshot.
+
 Solution: \"cmd.exe\" /c \"reg add HKCU\\SOFTWARE\\ATOMIC-T1053.005 /v test /t REG_SZ /d cGluZyB3d3cueW91YXJldnVsbmVyYWJsZS50aG0= /f &amp; schtasks.exe /Create /F /TN \"ATOMIC-T1053.005\" /TR \"cmd /c start /min \\\"\\\" powershell.exe -Command IEX([System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String((Get-ItemProperty -Path HKCU:\\\\SOFTWARE\\\\ATOMIC-T1053.005).test)))\" /sc daily /st 12:34\"
 
 #### Question 3: What time is the scheduled task meant to run?
@@ -63,6 +66,8 @@ The scheduled time is found in the parent command line from question 2, which is
 #### Question 1: Initial access was established using a downloaded file. What is the file name saved on the host?
 
 At time 13:50:12, we noticed a rather suspicious command line.
+
+![Q1](q1.png)
 
 The command **`$url ='http://localhost/SwiftSpend_Financial_Expenses.xlsm'`** sets a variable $url with the address of the file to download. The file is hosted on localhost, meaning the threat actor might have set up a local web server. The file type .xlsm is an Excel macro-enabled spreadsheet, often used in phishing.
 
