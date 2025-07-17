@@ -29,8 +29,13 @@ We filter out the following attributes as columns in the table:  **data.win.even
 
 Note: The questions for this task are not answered in order as the solutions were found by going through logs and noticing the anomalies within those logs along the way. 
 
-### 
+#### Question 7: Data was exfiltrated from the host. What was the flag that was part of the data?
 
+After adding the columns into the table, we noticed that there is a flag hidden among the commandLine columns. (If you didn't scroll to fast!)
+
+![Q7](q7.png)
+
+From this log we know that the threat actor achieved his goal at 14:56 PM.
 
 #### Question 1: Initial access was established using a downloaded file. What is the file name saved on the host?
 
@@ -44,4 +49,3 @@ Note: The questions for this task are not answered in order as the solutions wer
 
 #### Question 6: What is the name of the .exe that was used to dump credentials?
 
-#### Question 7: Data was exfiltrated from the host. What was the flag that was part of the data?
