@@ -33,7 +33,7 @@ Note: The questions for this task are not answered in order as the solutions wer
 
 After adding the columns into the table, we noticed that there is a flag hidden among the commandLine columns. (If you didn't scroll too fast!)
 
-![Q7](q7.png){: height="200"}
+![Q7](q7.png)
 
 From this log we know that the threat actor achieved his goal at 14:56 PM.
 
