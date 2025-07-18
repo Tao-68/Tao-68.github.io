@@ -1,6 +1,6 @@
 ---
 title: "TryHackMe: Monday Monitor"
-author: Kleiner
+author: Tao-68
 categories: [TryHackMe]
 tags: [windows, Wazuh, Sysmon]
 render_with_liquid: false
