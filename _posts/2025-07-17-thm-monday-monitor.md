@@ -4,7 +4,7 @@ author: Kleiner
 categories: [TryHackMe]
 tags: [windows, Wazuh, Sysmon]
 render_with_liquid: false
-media_subpath: /images/thm_monday_monitor/
+media_subpath: /images/thm/thm_monday_monitor/
 image:
   path: room_icon.png
 ---
